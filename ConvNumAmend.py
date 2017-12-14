@@ -77,17 +77,23 @@ with open(fileName,'rt') as csv_in:
         VoltageMag.append(VoltageMag_temp)
         DateCreated.append(DateCreated_temp)
         TimeIndex.append(TimeIndex_temp)
-# print(TimeIndex)
 
+# determine if first row is field name (header)
+tableHeader = False
 for i, Conv in enumerate(ConvNum):
-    if(not Conv.isnumeric()):
+    if (not Conv.isnumeric()):
+        tableHeader = True
         continue
-    if(i == 1):
+    elif i == 0:
         continue
-    if int(ConvNum[i]) < int(ConvNum[i-1]) and Sample_Date[i] == Sample_Date[i-1]:
+    elif i == 1 and tableHeader == True:
+        continue
+    elif int(ConvNum[i]) < int(ConvNum[i-1]) and Sample_Date[i] == Sample_Date[i-1]:
         ConvNum[i] = str(int(ConvNum[i]) + 100)
     elif Sample_Date[i] != Sample_Date[i-1]:
         ConvNum[i] = str((int(ConvNum[i-1]) + int(Index[i]) - int(Index[i-1]))%datarate)
+    else:
+        continue
 
 route, ext = os.path.splitext(fileName)
 routeList = route.split('\\')
